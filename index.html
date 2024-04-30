@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+
+<body>
+    <form id="form">
+        <input type="file" name="files" id="files" multiple>
+        <input type="text" name="name" id="name">
+        <textarea name="description" id="description" cols="30" rows="10"></textarea>
+        <button type="submit">
+            Enviar
+        </button>
+    </form>
+    <script>
+        const form = document.getElementById('form');
+        const url = "http://localhost:3000/api/messenger/uploadFiles/"
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const aux_form = e.target;
+            const formData = new FormData(aux_form);
+
+            let files = formData.get("files")
+
+            if (files == "") return;
+
+            const type = files.name.split(".")[1]
+
+            files.name = formData.get("name") + "." + type
+
+            formData.delete("files")
+            formData.append('id_user', '00000');
+            formData.append('type', type);
+            formData.append('files', files)
+            formData.append("size", files.size ?? 0 / 1000)
+
+            const resultado = await fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                    alert("Archivo subido correctamente")
+                })
+                .catch(err => console.log(err))
+
+        })
+
+    </script>
+</body>
+
+</html>
