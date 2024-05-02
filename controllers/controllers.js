@@ -2,7 +2,7 @@ import vna from "../const/vna.js";
 import { conexionNodeMailer } from "../mail/index.js";
 
 export const sentToMailController = () => async (req, res, next) => {
-  const emisor = req.body?.id_emisor;
+  const emisor = req.body?.emisor;
   const receptores = req.body?.receptores;
   const mensaje = req.body?.mensaje;
   const subject = req.body?.subject;
@@ -43,16 +43,14 @@ export const sentToMailController = () => async (req, res, next) => {
   }
 
   try {
-    for (let i = 0; receptores.length > i; i++) {
-      const resultado = await connection.sendMail({
-        from: `"${bandeja}" <${`${emisor}`}>`,
-        to: receptores[i],
-        subject,
-        html: mensaje,
-      });
+    const resultado = await connection.sendMail({
+      from: `"${bandeja}" <${`${emisor}`}>`,
+      to: receptores,
+      subject,
+      html: mensaje,
+    });
 
-      console.log(resultado);
-    }
+    console.log(resultado);
 
     connection.close();
 
